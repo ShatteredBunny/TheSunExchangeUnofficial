@@ -88,6 +88,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       _buildOverview(total),
       _buildWallet(data?.totals ?? []),
       _buildCells(data?.projects ?? []),
+      _buildUpcomingProjects(),
     ]);
   }
 
@@ -273,6 +274,22 @@ class _HomeWidgetState extends State<HomeWidget> {
             style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
           )));
     }
+
+    // Calculate earned percentage
+    var zar = project.projectEarnings.where((e) => e.currency == "ZAR");
+    var btc = project.projectEarnings.where((e) => e.currency == "XBT");
+    double earned = 0;
+    if (zar.isNotEmpty) {
+      earned += zar.first.rentalEarned;
+    }
+    if (btc.isNotEmpty) {
+      earned += btc.first.rentalEarned * Cache.get().getLastBtcToZarSync();
+    }
+    double percentage = 0;
+    if (earned != 0) {
+      percentage = earned / project.costOfCellsOwned! * 100;
+    }
+
     return Container(
         padding: const EdgeInsets.only(top: 10),
         child: Column(children: [
@@ -312,7 +329,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                           )),
                           Expanded(
                               child: Text(
-                            "+ ${project.generatedKWhToDate.toStringAsFixed(2)} kWh",
+                            "+ ${(project.generatedKWhToDate ?? 0).toStringAsFixed(2)} kWh",
                             textAlign: TextAlign.center,
                             textScaleFactor: 1.2,
                             style: const TextStyle(
@@ -333,6 +350,13 @@ class _HomeWidgetState extends State<HomeWidget> {
                           ...earnings,
                         ])),
                     Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                          "${percentage.toStringAsFixed(1)} % of investment earned",
+                          style: const TextStyle(color: Colors.green),
+                          textAlign: TextAlign.center),
+                    ),
+                    Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: _buildStatus(project.status)),
                     Padding(
@@ -344,6 +368,59 @@ class _HomeWidgetState extends State<HomeWidget> {
             ],
           )
         ]));
+  }
+
+  Widget _buildPublicProject(ProjectDashboard project) {
+    return Container(
+        padding: const EdgeInsets.only(top: 10),
+        child: Column(children: [
+          Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Text(
+                project.displayName,
+                textAlign: TextAlign.left,
+                textScaleFactor: 1.1,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              )),
+          Row(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: CachedNetworkImage(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      imageUrl: Cache.get()
+                          .getProjectSync(project.urlSlug)!
+                          .mainImage
+                          .url)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: _buildStatus(project.status)),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(Cache.get()
+                            .getProjectSync(project.urlSlug)!
+                            .summary)),
+                  ],
+                ),
+              )
+            ],
+          )
+        ]));
+  }
+
+  Widget _buildUpcomingProjects() {
+    List<Widget> ps = Cache.get()
+        .getUpcomingProjectsSync()!
+        .map((e) => _buildPublicProject(e))
+        .toList();
+    for (int i = ps.length - 1; i > 0; i--) {
+      ps.insert(i, const Divider());
+    }
+    return _buildCard("Upcoming Projects", ps);
   }
 
   Widget _buildStatus(String status) {
@@ -372,10 +449,12 @@ class _HomeWidgetState extends State<HomeWidget> {
           );
         }
       case "PROVISIONAL_COMING_SOON":
+      case "COMING_SOON":
         {
           return const Text(
             "COMING SOON",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
           );
         }
       default:
@@ -386,6 +465,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Future<Dashboard> _fetch() async {
+    await Cache.get().loadUpcomingProjects();
     await Cache.get().getBtcToZar();
     await Cache.get().loadProjects();
     return await Api.get().dashboard(await Cache.get().getMemberId());

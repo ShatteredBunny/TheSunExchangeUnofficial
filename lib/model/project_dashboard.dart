@@ -9,11 +9,11 @@ class ProjectDashboard {
   final String? statusMessage;
   final String? startDate;
   final String? campaignEndDate;
-  final int costOfCellsOwned;
-  final int cellsOwned;
+  final int? costOfCellsOwned;
+  final int? cellsOwned;
   // TODO:
   final List<ProjectEarnings> projectEarnings;
-  final double generatedKWhToDate;
+  final double? generatedKWhToDate;
 
   ProjectDashboard({
     required this.id,
@@ -32,7 +32,7 @@ class ProjectDashboard {
 
   factory ProjectDashboard.fromJson(Map<String, dynamic> json) {
     final List<ProjectEarnings> projectEarnings =
-        (json['projectEarnings'] as List)
+        json['projectEarnings'] == null ? [] : (json['projectEarnings'] as List)
             .map((e) => ProjectEarnings.fromJson(e))
             .toList();
 

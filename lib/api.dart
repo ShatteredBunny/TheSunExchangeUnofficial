@@ -5,6 +5,7 @@ import 'package:the_sun_exchange_unofficial/model/login_request.dart';
 import 'package:the_sun_exchange_unofficial/model/member_kyc_results.dart';
 import 'package:the_sun_exchange_unofficial/model/member_wallet.dart';
 import 'package:the_sun_exchange_unofficial/model/project.dart';
+import 'package:the_sun_exchange_unofficial/model/project_dashboard.dart';
 import 'package:the_sun_exchange_unofficial/model/query.dart';
 import 'package:the_sun_exchange_unofficial/model/token.dart';
 import 'model/dashboard.dart';
@@ -113,6 +114,17 @@ class Api {
     } else {
       throw "Error logging in, status code: ${res.statusCode}, body: ${res.body}";
     }
+  }
+
+  Future<List<ProjectDashboard>> upcomingProjects() async {
+    String query =
+        '{ getPreGeneratingProjects { ...ContProjectListItemFragment __typename }}fragment ContProjectListItemFragment on Project { id urlSlug displayName name campaignEnds cellCost projectStatus numberOfBuyers numberOfDaysLeft numberOfCellsSold solarCellsAvailable progressPercent designedOutput annualCellProduction projectBillingType estimatedCellRental visible __typename}';
+    var body = await _post(query, token: false);
+    return (body['data']['getPreGeneratingProjects'] as List)
+        .map(
+          (e) => ProjectDashboard.fromJson(e),
+        )
+        .toList();
   }
 
   Future<bool> passwordReset(String email) async {

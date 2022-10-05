@@ -1,5 +1,6 @@
 import 'package:the_sun_exchange_unofficial/model/member.dart';
 import 'package:the_sun_exchange_unofficial/model/project.dart';
+import 'package:the_sun_exchange_unofficial/model/project_dashboard.dart';
 
 import 'api.dart';
 
@@ -24,6 +25,7 @@ class TimedData<T> {
 class Cache {
   static final _instance = Cache();
   Map<String, Project>? _projects;
+  List<ProjectDashboard>? _upcomingProjects;
   Member? _member;
   final TimedData<int> _btcToZar = TimedData();
 
@@ -34,9 +36,20 @@ class Cache {
     }
   }
 
+  loadUpcomingProjects() async {
+    if (_projects == null) {
+      _upcomingProjects = await Api.get().upcomingProjects();
+    }
+  }
+
   Future<Project?> getProject(String urlSlug) async {
-    loadProjects();
+    await loadProjects();
     return _projects?[urlSlug];
+  }
+
+  Future<List<ProjectDashboard>> getUpcomingProjects() async {
+    await loadUpcomingProjects();
+    return _upcomingProjects!;
   }
 
   Future<Member> getMember() async {
@@ -57,6 +70,17 @@ class Cache {
 
   Project? getProjectSync(String urlSlug) {
     return _projects?[urlSlug];
+  }
+
+  List<ProjectDashboard>? getUpcomingProjectsSync(
+      {bool onlyComingSoon = true}) {
+    if (_upcomingProjects == null) return null;
+    if (onlyComingSoon) {
+      return _upcomingProjects!
+          .where((e) => e.status == "OPEN" || e.status.endsWith("COMING_SOON"))
+          .toList();
+    }
+    return _upcomingProjects;
   }
 
   int getLastBtcToZarSync() {
