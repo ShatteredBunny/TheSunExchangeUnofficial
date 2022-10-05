@@ -235,6 +235,12 @@ class _HomeWidgetState extends State<HomeWidget> {
           ]),
         ],
       ),
+      Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Text(
+            "${Cache.get().getLastBtcToZarSync()} ZAR/BTC",
+            textScaleFactor: 0.8,
+          )),
     ]);
   }
 
@@ -380,6 +386,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   Future<Dashboard> _fetch() async {
+    await Cache.get().getBtcToZar();
     await Cache.get().loadProjects();
     return await Api.get().dashboard(await Cache.get().getMemberId());
   }

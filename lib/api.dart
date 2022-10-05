@@ -71,6 +71,11 @@ class Api {
         .toList();
   }
 
+  Future<int> btcToZar() async {
+    return (await _post("{getCurrentXbtToZar}", token: false))['data']
+        ['getCurrentXbtToZar'];
+  }
+
   Future<bool> authenticated() async {
     return (await _post("{authenticated}"))['data']['authenticated'] as bool;
   }
