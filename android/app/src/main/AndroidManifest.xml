@@ -8,7 +8,7 @@
         </intent>
     </queries>
    <application
-        android:label="The Sun Exchange Unofficial"
+        android:label="My Solar Cells"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

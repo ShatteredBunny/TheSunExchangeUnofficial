@@ -26,7 +26,7 @@ class InfoWidget extends StatelessWidget {
                 const Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "The Sun Exchange Unofficial",
+                      "My Solar Cells",
                       style: TextStyle(fontWeight: FontWeight.bold),
                       textScaleFactor: 1.5,
                     )),

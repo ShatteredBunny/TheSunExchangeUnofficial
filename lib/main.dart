@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'The Sun Exchange Unofficial',
+      title: 'My Solar Cells',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: const Color.fromARGB(255, 250, 182, 0),

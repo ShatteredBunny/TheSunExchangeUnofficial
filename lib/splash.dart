@@ -27,7 +27,7 @@ class _SplashWidgetState extends State<SplashWidget> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: const Center(
           child: Text(
-        "The Sun Exchange Unofficial",
+        "My Solar Cells",
         style: TextStyle(
             color: Colors.white, fontWeight: FontWeight.w500, fontSize: 40),
       )),

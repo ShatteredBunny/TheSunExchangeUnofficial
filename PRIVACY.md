@@ -1,6 +1,6 @@
-# Privacy Policy for The Sun Exchange Unofficial
+# Privacy Policy for My Solar Cells
 
-At The Sun Exchange Unofficial, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by The Sun Exchange Unofficial and how we use it.
+At My Solar Cells, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by My Solar Cells and how we use it.
 
 If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.
 

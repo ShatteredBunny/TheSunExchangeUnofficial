@@ -1,4 +1,4 @@
-# The Sun Exchange Unofficial
+# My Solar Cells
 
 An app to monitor the Sun Exchange earnings.
 
